@@ -1,39 +1,37 @@
-const schedule = require('node-schedule');
+import { Telegraf } from 'telegraf';
+import { scheduleJob } from 'node-schedule';
 
-// Define reminder job schedules
-const scheduleReminders = (chatId) => {
-    // Daily reminder A
-    schedule.scheduleJob('0 4 * * *', () => { // Every day at 4 AM
-        bot.telegram.sendMessage(chatId, 'Reminder A: Time to start your day!');
-    });
+const bot = new Telegraf(process.env.BOT_TOKEN);
 
-    // Daily reminder B
-    schedule.scheduleJob('0 18 * * *', () => { // Every day at 6 PM
-        bot.telegram.sendMessage(chatId, 'Reminder B: Time for your evening check-in!');
-    });
+const reminders = {}; // Store reminders with chatId as key
 
-    // Every 4-hour reminder C
-    schedule.scheduleJob('0 */4 * * *', () => { // Every 4 hours
-        bot.telegram.sendMessage(chatId, 'Reminder C: Four-hour check-in!');
+// Function to set up daily reminders
+const setReminders = () => {
+    // Example: Schedule a daily reminder at 4 AM
+    scheduleJob('0 4 * * *', async () => {
+        for (const chatId in reminders) {
+            await bot.telegram.sendMessage(chatId, 'Reminder: Time to check your tasks!');
+        }
     });
 };
 
-// Handle /start command
-const handleStart = async (ctx) => {
+// Handle the /start command
+bot.start((ctx) => {
+    ctx.reply('Welcome! Type /reminder to set a daily reminder.');
+});
+
+// Handle the /reminder command
+bot.command('reminder', (ctx) => {
     const chatId = ctx.chat.id;
-    await ctx.reply('Welcome! I am your reminder bot.');
+    reminders[chatId] = true; // Set reminder for the user
+    ctx.reply('Reminder has been set.');
+});
 
-    // Schedule reminders for the chatId
-    scheduleReminders(chatId);
-};
+// Handle the /stop command
+bot.command('stop', (ctx) => {
+    const chatId = ctx.chat.id;
+    delete reminders[chatId]; // Stop reminder for the user
+    ctx.reply('Reminder has been stopped.');
+});
 
-// Handle messages
-const handleMessage = async (ctx) => {
-    // Example: echo received messages
-    await ctx.reply(`You said: ${ctx.message.text}`);
-};
-
-module.exports = {
-    handleStart,
-    handleMessage
-};
+export default { setReminders, handleReminderCommand };
