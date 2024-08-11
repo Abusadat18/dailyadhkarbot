@@ -1,5 +1,5 @@
-import { Telegraf } from 'telegraf';
-import { scheduleJob } from 'node-schedule';
+const { Telegraf } = require('telegraf');
+const schedule = require('node-schedule');
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -8,7 +8,7 @@ const reminders = {}; // Store reminders with chatId as key
 // Function to set up daily reminders
 const setReminders = () => {
     // Example: Schedule a daily reminder at 4 AM
-    scheduleJob('0 4 * * *', async () => {
+    schedule.scheduleJob('0 4 * * *', async () => {
         for (const chatId in reminders) {
             await bot.telegram.sendMessage(chatId, 'Reminder: Time to check your tasks!');
         }
@@ -34,4 +34,4 @@ bot.command('stop', (ctx) => {
     ctx.reply('Reminder has been stopped.');
 });
 
-export default { setReminders, handleReminderCommand };
+module.exports = { setReminders, handleReminderCommand };

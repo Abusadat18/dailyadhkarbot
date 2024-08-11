@@ -1,4 +1,4 @@
-const { Telegraf } = require('telegraf');
+import { Telegraf } from 'telegraf';
 
 const setWebhook = async () => {
     try {
@@ -10,6 +10,6 @@ const setWebhook = async () => {
     }
 };
 
-module.exports = {
+export default {
     setWebhook
 };
