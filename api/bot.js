@@ -13,10 +13,10 @@ bot.command('remind', (ctx) => ctx.reply('Reminder set!'));
 // Handle incoming updates
 module.exports = async (req, res) => {
     try {
-        await bot.handleUpdate(req.body);  // Await the promise to ensure proper handling
-        res.sendStatus(200);  // Send a successful response back to the server
+        await bot.handleUpdate(req.body); // Handle the update from Telegram
+        return res.status(200).send('OK'); // Send OK status
     } catch (error) {
         console.error('Error handling update:', error);
-        res.sendStatus(500);  // Send an error response if something goes wrong
+        return res.status(500).send('Error handling update'); // Send error status
     }
 };
