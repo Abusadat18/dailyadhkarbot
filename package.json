@@ -1,13 +1,11 @@
 {
   "name": "telegram-bot",
   "version": "1.0.0",
-  "description": "A Telegram bot that sends reminders.",
-  "main": "bot.js",
+  "main": "api/bot.js",
   "scripts": {
-    "start": "node bot.js"
+    "start": "node api/bot.js"
   },
   "dependencies": {
-    "node-telegram-bot-api": "^0.60.0",
-    "luxon": "^3.0.0"
+    "telegraf": "^4.16.3"  // Use the latest version
   }
 }
