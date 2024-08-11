@@ -8,35 +8,7 @@ const handleStartCommand = (ctx) => {
     ctx.reply('Welcome! Use /reminder to set a reminder.');
 };
 
-// This function will handle the '/reminder' command
-const handleReminderCommand = async (ctx) => {
-    const chatId = ctx.chat.id;
-    const message = ctx.message.text;
-
-    // Parse the reminder details from the message
-    const parts = message.split(' ');
-    if (parts.length < 2) {
-        ctx.reply('Usage: /reminder <time> <message>');
-        return;
-    }
-
-    const time = parts[1];
-    const reminderMessage = parts.slice(2).join(' ');
-
-    // Here you would add code to schedule a reminder
-    ctx.reply(`Reminder set for ${time}: ${reminderMessage}`);
-};
-
-// Middleware to handle commands
-bot.use((ctx, next) => {
-    const text = ctx.message.text;
-    if (text.startsWith('/start')) {
-        handleStartCommand(ctx);
-    } else if (text.startsWith('/reminder')) {
-        handleReminderCommand(ctx);
-    } else {
-        next();
-    }
-});
+// Register the '/start' command handler
+bot.start(handleStartCommand);
 
 module.exports = { bot };
