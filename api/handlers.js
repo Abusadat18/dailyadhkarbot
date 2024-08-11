@@ -1,37 +1,34 @@
+// handlers.js
+
 const { Telegraf } = require('telegraf');
-const schedule = require('node-schedule');
+const bot = require('./bot'); // Import the bot instance
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
-
-const reminders = {}; // Store reminders with chatId as key
-
-// Function to set up daily reminders
-const setReminders = () => {
-    // Example: Schedule a daily reminder at 4 AM
-    schedule.scheduleJob('0 4 * * *', async () => {
-        for (const chatId in reminders) {
-            await bot.telegram.sendMessage(chatId, 'Reminder: Time to check your tasks!');
-        }
-    });
+// This function will handle the '/start' command
+const handleStartCommand = (ctx) => {
+    ctx.reply('Welcome! Use /reminder to set a reminder.');
 };
 
-// Handle the /start command
-bot.start((ctx) => {
-    ctx.reply('Welcome! Type /reminder to set a daily reminder.');
-});
-
-// Handle the /reminder command
-bot.command('reminder', (ctx) => {
+// This function will handle the '/reminder' command
+const handleReminderCommand = async (ctx) => {
     const chatId = ctx.chat.id;
-    reminders[chatId] = true; // Set reminder for the user
-    ctx.reply('Reminder has been set.');
-});
+    const message = ctx.message.text;
 
-// Handle the /stop command
-bot.command('stop', (ctx) => {
-    const chatId = ctx.chat.id;
-    delete reminders[chatId]; // Stop reminder for the user
-    ctx.reply('Reminder has been stopped.');
-});
+    // Parse the reminder details from the message
+    const parts = message.split(' ');
+    if (parts.length < 2) {
+        ctx.reply('Usage: /reminder <time> <message>');
+        return;
+    }
 
-module.exports = { setReminders, handleReminderCommand };
+    const time = parts[1];
+    const reminderMessage = parts.slice(2).join(' ');
+
+    // Here you would add code to schedule a reminder
+    ctx.reply(`Reminder set for ${time}: ${reminderMessage}`);
+};
+
+// Register command handlers
+bot.command('start', handleStartCommand);
+bot.command('reminder', handleReminderCommand);
+
+module.exports = { bot };
