@@ -10,13 +10,13 @@ bot.telegram.setWebhook(webhookUrl);
 bot.start((ctx) => ctx.reply('Welcome! Your bot is up and running.'));
 bot.command('remind', (ctx) => ctx.reply('Reminder set!'));
 
-// Launch bot (only necessary if running locally; not required in Vercel deployment)
-if (process.env.NODE_ENV !== 'production') {
-    bot.launch();
-}
-
 // Handle incoming updates
-module.exports = (req, res) => {
-    bot.handleUpdate(req.body);
-    res.sendStatus(200);
+module.exports = async (req, res) => {
+    try {
+        await bot.handleUpdate(req.body);  // Await the promise to ensure proper handling
+        res.sendStatus(200);  // Send a successful response back to the server
+    } catch (error) {
+        console.error('Error handling update:', error);
+        res.sendStatus(500);  // Send an error response if something goes wrong
+    }
 };
