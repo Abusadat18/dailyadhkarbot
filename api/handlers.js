@@ -1,37 +1,39 @@
-const { Telegraf } = require('telegraf');
 const schedule = require('node-schedule');
-const moment = require('moment-timezone');
 
-const bot = new Telegraf(process.env.BOT_TOKEN);
-
+// Define reminder job schedules
 const scheduleReminders = (chatId) => {
-    // Convert IST times to UTC
-    const convertToUTC = (timeStr) => {
-        return moment.tz(timeStr, 'Asia/Kolkata').utc().format('HH:mm');
-    };
-
-    // Daily reminder A at 4 AM IST
-    const reminderAUTC = convertToUTC('04:00');
-    schedule.scheduleJob(`0 ${reminderAUTC} * * *`, () => {
+    // Daily reminder A
+    schedule.scheduleJob('0 4 * * *', () => { // Every day at 4 AM
         bot.telegram.sendMessage(chatId, 'Reminder A: Time to start your day!');
     });
 
-    // Daily reminder B at 6 PM IST
-    const reminderBUTC = convertToUTC('18:00');
-    schedule.scheduleJob(`0 ${reminderBUTC} * * *`, () => {
+    // Daily reminder B
+    schedule.scheduleJob('0 18 * * *', () => { // Every day at 6 PM
         bot.telegram.sendMessage(chatId, 'Reminder B: Time for your evening check-in!');
     });
 
     // Every 4-hour reminder C
-    schedule.scheduleJob('0 */4 * * *', () => { // Every 4 hours UTC
+    schedule.scheduleJob('0 */4 * * *', () => { // Every 4 hours
         bot.telegram.sendMessage(chatId, 'Reminder C: Four-hour check-in!');
     });
 };
 
-// Example webhook handler for updates
-bot.on('text', (ctx) => {
+// Handle /start command
+const handleStart = async (ctx) => {
     const chatId = ctx.chat.id;
-    scheduleReminders(chatId);
-});
+    await ctx.reply('Welcome! I am your reminder bot.');
 
-bot.launch();
+    // Schedule reminders for the chatId
+    scheduleReminders(chatId);
+};
+
+// Handle messages
+const handleMessage = async (ctx) => {
+    // Example: echo received messages
+    await ctx.reply(`You said: ${ctx.message.text}`);
+};
+
+module.exports = {
+    handleStart,
+    handleMessage
+};
