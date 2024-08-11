@@ -6,6 +6,6 @@
     "start": "node api/bot.js"
   },
   "dependencies": {
-    "telegraf": "^4.16.3"  // Use the latest version
+    "telegraf": "^4.16.3"
   }
 }
