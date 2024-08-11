@@ -1,29 +1,24 @@
 const { Telegraf } = require('telegraf');
 
-// Initialize the bot with the token from environment variables
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-// Handle the "/start" command
-bot.start((ctx) => {
-  ctx.reply('Welcome! Your bot is working.');
-});
+// Command handlers
+bot.start((ctx) => ctx.reply('Welcome!'));
+bot.command('remindera', (ctx) => ctx.reply('Reminder A will trigger at 4 AM.'));
+bot.command('reminderb', (ctx) => ctx.reply('Reminder B will trigger at 6 PM.'));
+bot.command('reminderc', (ctx) => ctx.reply('Reminder C will trigger every 4 hours.'));
 
-// Other commands or message handling can go here
-
-// Export the function to handle incoming updates
-module.exports = (req, res) => {
-  try {
-    if (req.method !== 'POST') {
-      return res.status(405).end(); // Method Not Allowed
+// This is the handler that processes incoming updates via the webhook
+module.exports = async (req, res) => {
+    if (req.method === 'POST') {
+        try {
+            await bot.handleUpdate(req.body); // Process the update
+            res.status(200).send('OK');
+        } catch (error) {
+            console.error('Error handling update:', error);
+            res.status(500).send('Error handling update');
+        }
+    } else {
+        res.status(405).send('Method Not Allowed'); // Only allow POST requests
     }
-
-    // Handle the update from Telegram
-    bot.handleUpdate(req.body, res);
-
-    // Return a simple OK status after processing
-    res.status(200).end();
-  } catch (error) {
-    console.error('Error handling update:', error);
-    res.status(500).send('Error handling update'); // Send error status
-  }
 };
