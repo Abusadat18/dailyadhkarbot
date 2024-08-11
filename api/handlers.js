@@ -27,8 +27,16 @@ const handleReminderCommand = async (ctx) => {
     ctx.reply(`Reminder set for ${time}: ${reminderMessage}`);
 };
 
-// Register command handlers
-bot.command('start', handleStartCommand);
-bot.command('reminder', handleReminderCommand);
+// Middleware to handle commands
+bot.use((ctx, next) => {
+    const text = ctx.message.text;
+    if (text.startsWith('/start')) {
+        handleStartCommand(ctx);
+    } else if (text.startsWith('/reminder')) {
+        handleReminderCommand(ctx);
+    } else {
+        next();
+    }
+});
 
 module.exports = { bot };
