@@ -1,7 +1,7 @@
 // handlers.js
 
-const { Telegraf } = require('telegraf');
-const bot = require('./bot'); // Import the bot instance
+import { Telegraf } from 'telegraf';
+import { start } from './bot'; // Import the bot instance
 
 // This function will handle the '/start' command
 const handleStartCommand = (ctx) => {
@@ -9,6 +9,6 @@ const handleStartCommand = (ctx) => {
 };
 
 // Register the '/start' command handler
-bot.start(handleStartCommand);
+start(handleStartCommand);
 
-module.exports = { bot };
+export default { bot };

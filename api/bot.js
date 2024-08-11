@@ -1,5 +1,5 @@
 const { Telegraf } = require('telegraf');
-const { setReminders, handleReminderCommand } = require('./handlers');
+const { setReminders, handleReminderCommand } = require('./handlers').default;
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
