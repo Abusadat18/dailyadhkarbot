@@ -1,26 +1,30 @@
-const { JobQueue } = require('telegraf');
+const schedule = require('node-schedule');
 
-// Define jobQueue globally
-const jobQueue = new JobQueue();
+// Define reminder job schedules
+const scheduleReminders = (chatId) => {
+    // Daily reminder A
+    schedule.scheduleJob('0 4 * * *', () => { // Every day at 4 AM
+        bot.telegram.sendMessage(chatId, 'Reminder A: Time to start your day!');
+    });
+
+    // Daily reminder B
+    schedule.scheduleJob('0 18 * * *', () => { // Every day at 6 PM
+        bot.telegram.sendMessage(chatId, 'Reminder B: Time for your evening check-in!');
+    });
+
+    // Every 4-hour reminder C
+    schedule.scheduleJob('0 */4 * * *', () => { // Every 4 hours
+        bot.telegram.sendMessage(chatId, 'Reminder C: Four-hour check-in!');
+    });
+};
 
 // Handle /start command
 const handleStart = async (ctx) => {
     const chatId = ctx.chat.id;
     await ctx.reply('Welcome! I am your reminder bot.');
-    
-    // Add jobs for reminders
-    jobQueue.add(() => ctx.reply('Reminder A: Time to start your day!'), {
-        interval: 24 * 60 * 60 * 1000, // daily
-        startTime: new Date(Date.now() + 5 * 60 * 1000), // start in 5 minutes for testing
-    });
-    jobQueue.add(() => ctx.reply('Reminder B: Time for your evening check-in!'), {
-        interval: 24 * 60 * 60 * 1000, // daily
-        startTime: new Date(Date.now() + 5 * 60 * 1000), // start in 5 minutes for testing
-    });
-    jobQueue.add(() => ctx.reply('Reminder C: Four-hour check-in!'), {
-        interval: 4 * 60 * 60 * 1000, // every 4 hours
-        startTime: new Date(Date.now() + 5 * 60 * 1000), // start in 5 minutes for testing
-    });
+
+    // Schedule reminders for the chatId
+    scheduleReminders(chatId);
 };
 
 // Handle messages
