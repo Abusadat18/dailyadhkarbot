@@ -5,7 +5,7 @@ bot.start((ctx) => ctx.reply('Welcome! Your bot is up and running.'));
 bot.command('remind', (ctx) => ctx.reply('Reminder set!'));
 
 // This function will set the webhook to your Vercel endpoint
-bot.telegram.setWebhook(`${process.env.APP_URL}/api/bot`);
+bot.telegram.setWebhook(`${process.env.https://dailyadhkarbot.vercel.app}/api/bot`);
 bot.startPolling();
 
 // Handle webhook updates
