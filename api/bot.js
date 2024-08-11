@@ -1,22 +1,29 @@
 const { Telegraf } = require('telegraf');
+
+// Initialize the bot with the token from environment variables
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-// Set the webhook URL using your Vercel project URL
-const webhookUrl = `${process.env.BOT_URL}/api/bot`;
+// Handle the "/start" command
+bot.start((ctx) => {
+  ctx.reply('Welcome! Your bot is working.');
+});
 
-// Set webhook for Telegram to your Vercel endpoint
-bot.telegram.setWebhook(webhookUrl);
+// Other commands or message handling can go here
 
-bot.start((ctx) => ctx.reply('Welcome! Your bot is up and running.'));
-bot.command('remind', (ctx) => ctx.reply('Reminder set!'));
-
-// Handle incoming updates
-module.exports = async (req, res) => {
-    try {
-        await bot.handleUpdate(req.body); // Handle the update from Telegram
-        return res.status(200).send('OK'); // Send OK status
-    } catch (error) {
-        console.error('Error handling update:', error);
-        return res.status(500).send('Error handling update'); // Send error status
+// Export the function to handle incoming updates
+module.exports = (req, res) => {
+  try {
+    if (req.method !== 'POST') {
+      return res.status(405).end(); // Method Not Allowed
     }
+
+    // Handle the update from Telegram
+    bot.handleUpdate(req.body, res);
+
+    // Return a simple OK status after processing
+    res.status(200).end();
+  } catch (error) {
+    console.error('Error handling update:', error);
+    res.status(500).send('Error handling update'); // Send error status
+  }
 };
